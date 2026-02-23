@@ -4,12 +4,14 @@ import time
 from typing import Union, List
 
 from ok import BaseTask, find_boxes_by_name, Box, Logger
+from src.image.frame_processs import isolate_by_hsv_ranges
+from functools import partial
 
 logger = Logger.get_logger(__name__)
 pop_ups = ['点击空白处关闭', '点击屏幕任意位置继续', '点击任意位置继续']
 number_re = re.compile(r"^\d+$")
 stamina_re = re.compile(r"^\d+/\d+")
-map_re = re.compile(r'-?\d{1,2}-\d{1,2}\*?')
+map_re = re.compile(r".{0,2}\s*-?\s*\d{1,2}\s*-\s*\d{1,2}\s*\*?")
 
 
 def parse_time_option(option: str) -> list[float]:
@@ -33,7 +35,24 @@ class BaseGfTask(BaseTask):
             "浊刻": ["芙洛伦", "妮基塔", "春田", "朝晖", "塞布丽娜", "托洛洛", "寇尔芙"],
             "酸蚀": ["翡图萨", "哈卜茜", "琳德", "米什缇", "可露凯", "纳甘", "佩里缇亚", "纳美西丝"]
         }
+    def isolate_by_hsv_ranges(self, frame, ranges, invert=True, kernel_size=2):
+        """
+        :param frame: 输入图像（BGR）
+        :param ranges: HSV 区间列表
+        :param invert: 是否反转结果
+        :param kernel_size: 形态学核大小
 
+        作用：按 HSV 范围提取颜色区域。
+        """
+        return isolate_by_hsv_ranges(frame, ranges, invert, kernel_size)
+
+    def make_hsv_isolator(self, ranges):
+        """
+        :param ranges: HSV 区间列表
+
+        作用：生成固定 HSV 范围的图像处理函数。
+        """
+        return partial(self.isolate_by_hsv_ranges, ranges=ranges)
     def get_role_by_name(self, name):
         return next((k for k, v in self.roles_dict.items() if name in v), None)
 

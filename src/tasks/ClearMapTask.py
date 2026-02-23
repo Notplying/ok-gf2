@@ -1,8 +1,8 @@
+import re
 from os import remove
-
 from ok import Logger
 from src.tasks.BaseGfTask import BaseGfTask, map_re
-
+from src.image.hsv_config import HSVRange as hR
 logger = Logger.get_logger(__name__)
 
 
@@ -10,8 +10,17 @@ class ClearMapTask(BaseGfTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = "推图"
+        self.name = "推图,可尝试多种识别方式"
         self.description = "从要推的图的最左边开始"
+        self.default_config.update({"识别模式": "除杂色ocr1"})
+        self.config_description.update({
+            '识别模式':'推图时使用的OCR预处理方式\n可尝试普通ocr, 除杂色ocr1(标准白色), 除杂色ocr2(更宽松的白色+部分灰色)\n使用场景分别是:背景和关卡卡片非白色系、关卡卡片非白色系，关卡卡片非白灰色系',
+        })
+        self.stamina_options = ["普通ocr", "除杂色ocr1","除杂色ocr2"]
+        self.config_type["识别模式"] = {
+            "type": "drop_down",
+            "options": self.stamina_options,
+        }
 
     def run(self):
         count = 0
@@ -19,18 +28,26 @@ class ClearMapTask(BaseGfTask):
         last_fallback_name = None
         last_failed_name = None  # 用来保存上次进入 if not text 分支的关卡名
         last_failed_flag = False  # 标记上次循环是否进入过 if not text 分支
-
+        map_ocr_box = self.box_of_screen(x=486 / 1920, y=323 / 1080, to_x=1.0, to_y=727 / 1080)
+        if self.config['识别模式'] != "普通ocr":
+            if self.config['识别模式'] == "除杂色ocr1":
+                map_frame_processor = self.make_hsv_isolator(hR.WHITE)
+            else:
+                map_frame_processor = self.make_hsv_isolator(hR.WHITE_GRAY)
+        else:
+            map_frame_processor = None
         while True:
             last_clicked = None
             self.sleep(2)
 
             # 根据上次是否失败，选择 OCR 匹配规则
+            self.next_frame()
             if last_failed_flag and last_failed_name:
                 maps = self.ocr(
-                    box=self.box_of_screen(0, 0.2, 1, 0.8),
-                    match=last_failed_name,
+                    box=map_ocr_box,
+                    match=re.compile(last_failed_name),
                     log=True,
-                    threshold=0.5
+                    frame_processor=map_frame_processor,
                 )
                 if maps:
                     maps[0].name = "before_one_" + maps[0].name
@@ -39,10 +56,10 @@ class ClearMapTask(BaseGfTask):
                 last_failed_flag = False  # 使用一次后清除标记
             else:
                 maps = self.ocr(
-                    box=self.box_of_screen(0, 0.2, 1, 0.8),
+                    box=map_ocr_box,
                     match=map_re,
                     log=True,
-                    threshold=0.5
+                    frame_processor=map_frame_processor,
                 )
 
             maps = sorted(maps, key=lambda obj: obj.x)

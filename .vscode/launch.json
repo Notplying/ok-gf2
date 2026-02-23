@@ -6,10 +6,17 @@
     "configurations": [
 
         {
-            "name": "Python 调试程序: 当前文件",
+            "name": "Python 启动程序",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python 调试程序",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main_debug.py",
             "console": "integratedTerminal"
         }
     ]
