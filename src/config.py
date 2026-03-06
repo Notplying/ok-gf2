@@ -1,7 +1,7 @@
 import os
 
 import numpy as np
-from ok import ConfigOption
+from ok import Config
 
 version = "dev"
 # 不需要修改version, Github Action打包会自动修改
@@ -15,12 +15,7 @@ config = {
     "wait_until_before_delay": 0,
     "wait_until_check_delay": 0,
     "wait_until_settle_time": 0,  # 调用 wait_until时候, 在第一次满足条件的时候, 会等待再次检测, 以避免某些滑动动画没到预定位置就在动画路径中被检测到
-    "ocr": {  # 可选, 使用的OCR库
-        "lib": "onnxocr",
-        "params": {
-            "use_openvino": True,
-        },
-    },
+    "ocr": {"lib": "onnxocr", "params": {"use_openvino": True}},  # 可选, 使用的OCR库
     "windows": {  # Windows游戏请填写此设置
         "exe": ["GF2_Exilium.exe"],  # 新版统一使用 list
         # 'hwnd_class': 'UnrealWindow',
@@ -32,12 +27,7 @@ config = {
         "require_bg": True,  # 要求使用后台截图
     },
     "start_timeout": 60,  # default 60
-    "window_size": {  # ok-script窗口大小
-        "width": 1200,
-        "height": 800,
-        "min_width": 600,
-        "min_height": 450,
-    },
+    "window_size": {"width": 1200, "height": 800, "min_width": 600, "min_height": 450},  # ok-script窗口大小
     "supported_resolution": {
         # 'ratio': '16:9',  # 支持的游戏分辨率
         "min_size": (1280, 720),  # 支持的最低游戏分辨率
@@ -67,14 +57,12 @@ config = {
         "default_threshold": 0.8,  # 默认threshold
     },
     "version": version,  # 版本
-    "my_app": [
-        "src.globals",
-        "Globals",
-    ],  # 可选. 全局单例对象, 可以存放加载的模型, 使用og.my_app调用
+    "my_app": ["src.globals", "Globals"],  # 可选. 全局单例对象, 可以存放加载的模型, 使用og.my_app调用
     "onetime_tasks": [  # 用户点击触发的任务
         ["src.tasks.DailyTask", "DailyTask"],
         ["src.tasks.WeeklyTask", "WeeklyTask"],
         ["src.tasks.ClearMapTask", "ClearMapTask"],
         ["ok", "DiagnosisTask"],
-    ]
+    ],
+    "custom_tabs": [["src.ui.TaskSchedulerTab", "TaskSchedulerTab"]],  # 自定义侧边栏页面  # 任务计划管理
 }
