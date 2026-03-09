@@ -16,7 +16,7 @@ class DailyTask(BaseGfTask):
         super().__init__(*args, **kwargs)
         self.name = "一键日常"
         self.description = "收菜"
-
+        self.support_schedule_task = True
         self._init_default_config()
         self._init_stamina_options()
         self.add_exit_after_config()

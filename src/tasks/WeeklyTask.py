@@ -13,14 +13,12 @@ class WeeklyTask(BaseGfTask):
         super().__init__(*args, **kwargs)
         self.name = "周常"
         self.description = ""
+        self.support_schedule_task = True
         self.default_config.update({
             '首领挑战': True,
             '峰值推定': True,
             '扩编实练': False,
-        })
-        self.stamina_options = ['每次启动该任务时', '每周开始时', '周一和周四']
-        self.config_type['执行频次'] = {'type': "drop_down",
-                                        'options': self.stamina_options}
+        }) 
 
     def run(self):
         self.ensure_main(recheck_time=2, time_out=90)

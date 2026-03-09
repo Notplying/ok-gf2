@@ -64,5 +64,5 @@ config = {
         ["src.tasks.ClearMapTask", "ClearMapTask"],
         ["ok", "DiagnosisTask"],
     ],
-    "custom_tabs": [["src.ui.TaskSchedulerTab", "TaskSchedulerTab"]],  # 自定义侧边栏页面  # 任务计划管理
+    # "custom_tabs": [["src.ui.TaskSchedulerTab", "TaskSchedulerTab"]],  # 自定义侧边栏页面  # 任务计划管理
 }
