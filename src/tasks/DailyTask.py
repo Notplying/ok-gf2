@@ -112,16 +112,16 @@ class DailyTask(BaseGfTask):
             self.log_info("日常完成!", notify=True)
     def explore_claim(self):
         self.info_set('current_task', 'explore_claim')
-        if not self.wait_click_ocr(match='限时开启', box='top_right',after_sleep=2, time_out=2, raise_if_not_found=True):
+        if not self.wait_click_ocr(match='限时开启', box='top_right',after_sleep=2, time_out=2, raise_if_not_found=True,log=True):
             return
-        if not self.wait_click_ocr(match='边界推进', box='top_right',after_sleep=2, time_out=2, raise_if_not_found=True):
+        if not self.wait_click_ocr(match='边界推进', box='top_right',after_sleep=2, time_out=2, raise_if_not_found=True,log=True):
             return
-        if not self.wait_click_ocr(match=re.compile('采集'), box='bottom_right',after_sleep=2, time_out=2, raise_if_not_found=True):
+        if not self.wait_click_ocr(match=re.compile('采集'), box='bottom_right',after_sleep=2, time_out=2, raise_if_not_found=True,log=True):
             return
-        if not self.wait_click_ocr(match=re.compile('领取'), box='bottom_right', time_out=2, raise_if_not_found=True):
+        if not self.wait_click_ocr(match=re.compile('领取'), box='bottom_right', time_out=2, raise_if_not_found=True,after_sleep=2, log=True):
             return
         self.wait_pop_up()
-        if not self.wait_click_ocr(match=re.compile('派遣'), box='bottom_right',after_sleep=2, time_out=2, raise_if_not_found=False):
+        if not self.wait_click_ocr(match=re.compile('派遣'), box='bottom_right',after_sleep=2, time_out=2, raise_if_not_found=False,log=True):
             return
 
     def community_daily(self):
@@ -380,11 +380,11 @@ class DailyTask(BaseGfTask):
             lambda: self.wait_click_ocr(
                 match="开始循环", box="bottom_left", time_out=5, after_sleep=2, log=True
             ),
-            lambda: self.wait_click_ocr(match=["确认"], after_sleep=2),
+            lambda: self.wait_click_ocr(match=["确认"], after_sleep=2, log=True),
             lambda: self.wait_click_ocr(
                 match=["循环结束"], time_out=600, box="top", after_sleep=2
             ),
-            lambda: self.wait_click_ocr(match=["确认"], after_sleep=2),
+            lambda: self.wait_click_ocr(match=["确认"], after_sleep=2, log=True),
         ]
 
         if self.config.get("自主循环"):
