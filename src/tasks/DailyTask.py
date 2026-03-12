@@ -216,7 +216,7 @@ class DailyTask(BaseGfTask):
                     )
                 else:
                     self.send_key("f2",after_sleep=2)
-                    self.wait_click_ocr(match=re.compile('一键领取'), box='bottom_right', time_out=10, raise_if_not_found=True)
+                    self.wait_click_ocr(match=re.compile('领取'), box=self.box_of_screen(1155/1920,824/1080,1,1), time_out=10, raise_if_not_found=False,log=True)
                     self.wait_pop_up()
             else:
                 self.log_error('没检测到活动层页面')
