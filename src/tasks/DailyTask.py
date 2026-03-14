@@ -114,7 +114,7 @@ class DailyTask(BaseGfTask):
         self.info_set('current_task', 'explore_claim')
         if not self.wait_click_ocr(match='限时开启', box='top_right',after_sleep=2, time_out=2, raise_if_not_found=True,log=True):
             return
-        if not self.wait_click_ocr(match=re.compile('边界推进'), box='top_right',after_sleep=2, time_out=2, raise_if_not_found=True,log=True):
+        if not self.wait_click_ocr(match=re.compile('边界推进'), box='top_right',after_sleep=6, time_out=2, raise_if_not_found=True,log=True):
             return
         if not self.wait_click_ocr(match=re.compile('采集'), box='bottom_right',after_sleep=2, time_out=2, raise_if_not_found=True,log=True):
             return
