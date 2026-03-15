@@ -100,7 +100,7 @@ class DailyTask(BaseGfTask):
                 # or 规则：任一为 True 即执行
                 if not any(self.config.get(k) for k in keys):
                     continue
-
+            self.ensure_main(recheck_time=2, time_out=90)
             result = func()  # 不捕获异常，异常自然向上传递
             if result is False:
                 self.log_info(f"任务 {key} 执行失败或未完成")
@@ -253,8 +253,8 @@ class DailyTask(BaseGfTask):
 
     def claim_quest(self):
         self.info_set('current_task', 'claim_quest')
-        self.wait_click_ocr(match=['委托'], box='bottom_right', after_sleep=0.5, raise_if_not_found=True)
-        self.wait_click_ocr(match=['一键领取', '领取全部'], box='bottom_right', time_out=6,log=True,
+        self.wait_click_ocr(match=re.compile('委托'), box='bottom_right', after_sleep=0.5, raise_if_not_found=True)
+        self.wait_click_ocr(match=[re.complie('键领取'), '领取全部'], box='bottom_right', time_out=6,log=True,
                             raise_if_not_found=False, after_sleep=2)
         results = self.wait_ocr(match=['领取全部', '已全部领取'], box='left', time_out=15,log=True)
         # if results and results[0].name == '一键领取':
@@ -284,7 +284,7 @@ class DailyTask(BaseGfTask):
         if self.wait_click_ocr(match=['巡录'], box='bottom', after_sleep=0.5, time_out=2, raise_if_not_found=False):
             self.wait_click_ocr(match=['沿途行动'], box='top_right', time_out=4,
                                 raise_if_not_found=True, after_sleep=1)
-            self.wait_click_ocr(match=['一键领取', '领取全部'], box='bottom_right', time_out=4,
+            self.wait_click_ocr(match=[re.complie('键领取'), '领取全部'], box='bottom_right', time_out=4,
                                 raise_if_not_found=False, after_sleep=1)
             self.ensure_main()
 
@@ -354,7 +354,7 @@ class DailyTask(BaseGfTask):
 
     def gongongqu(self):
         self.info_set('current_task', 'gongongqu')
-        self.wait_click_ocr(match=['委托'], box='right', after_sleep=2.5, raise_if_not_found=True)
+        self.wait_click_ocr(match=re.compile('委托'), box='bottom_right', after_sleep=2.5, raise_if_not_found=True)
         buttons = self.find_feature(feature_name='ggq_can_button', box='left')
         if not self.config.get('自主循环'):
             self.click(buttons[0])
@@ -406,7 +406,9 @@ class DailyTask(BaseGfTask):
         # 执行
         for i in range(len(steps)):
             for step in steps[i]:
-                step()
+                if not step():
+                    self.log_info(f"自主循环步骤{i + 1}未完成，退出循环", notify=True)
+                    return
     def shopping(self):
         self.info_set('current_task', 'shopping')
         self.wait_click_ocr(match=['商城'], box='bottom_right', after_sleep=1.5, raise_if_not_found=True)
@@ -463,7 +465,7 @@ class DailyTask(BaseGfTask):
         #     if not self.wait_ocr(match=['演习补给'], box='top', time_out=4):
         #         self.wait_pop_up(time_out=4)
         if self.wait_click_ocr(match=['周期奖励'], box='left', after_sleep=1, raise_if_not_found=True):
-            self.wait_click_ocr(match=['一键领取'], after_sleep=1, raise_if_not_found=False)
+            self.wait_click_ocr(match=[re.complie('键领取')], after_sleep=1, raise_if_not_found=False)
         self.ensure_main()
 
     def bingqi(self):
