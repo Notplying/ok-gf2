@@ -254,7 +254,7 @@ class DailyTask(BaseGfTask):
     def claim_quest(self):
         self.info_set('current_task', 'claim_quest')
         self.wait_click_ocr(match=re.compile('委托'), box='bottom_right', after_sleep=0.5, raise_if_not_found=True)
-        self.wait_click_ocr(match=[re.complie('键领取'), '领取全部'], box='bottom_right', time_out=6,log=True,
+        self.wait_click_ocr(match=[re.compile('键领取'), '领取全部'], box='bottom_right', time_out=6,log=True,
                             raise_if_not_found=False, after_sleep=2)
         results = self.wait_ocr(match=['领取全部', '已全部领取'], box='left', time_out=15,log=True)
         # if results and results[0].name == '一键领取':
@@ -284,7 +284,7 @@ class DailyTask(BaseGfTask):
         if self.wait_click_ocr(match=['巡录'], box='bottom', after_sleep=0.5, time_out=2, raise_if_not_found=False):
             self.wait_click_ocr(match=['沿途行动'], box='top_right', time_out=4,
                                 raise_if_not_found=True, after_sleep=1)
-            self.wait_click_ocr(match=[re.complie('键领取'), '领取全部'], box='bottom_right', time_out=4,
+            self.wait_click_ocr(match=[re.compile('键领取'), '领取全部'], box='bottom_right', time_out=4,
                                 raise_if_not_found=False, after_sleep=1)
             self.ensure_main()
 
@@ -465,7 +465,7 @@ class DailyTask(BaseGfTask):
         #     if not self.wait_ocr(match=['演习补给'], box='top', time_out=4):
         #         self.wait_pop_up(time_out=4)
         if self.wait_click_ocr(match=['周期奖励'], box='left', after_sleep=1, raise_if_not_found=True):
-            self.wait_click_ocr(match=[re.complie('键领取')], after_sleep=1, raise_if_not_found=False)
+            self.wait_click_ocr(match=[re.compile('键领取')], after_sleep=1, raise_if_not_found=False)
         self.ensure_main()
 
     def bingqi(self):
