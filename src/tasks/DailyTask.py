@@ -540,7 +540,7 @@ class DailyTask(BaseGfTask):
     def chenyan(self):
         if not self.config.get('尘烟'):
             return
-        end = self.ocr(match=re.compile('后结束$'), box=self.box.bottom_right)
+        end = self.ocr(match=re.compile('后结束'), box=self.box.bottom_right, log=True)
         if not end:
             return
         self.click(end, after_sleep=1)
