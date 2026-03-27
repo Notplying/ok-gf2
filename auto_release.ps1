@@ -35,7 +35,7 @@ function Get-AllTags {
     }
 }
 
-function Parse-Version {
+function ParseVersion {
 
     param([string]$tag)
 
@@ -66,7 +66,7 @@ function Find-MaxVersion {
 
     foreach ($tag in $tags) {
 
-        $version = Parse-Version $tag
+        $version = ParseVersion $tag
 
         if ($version.Valid) {
             $versions += $version
@@ -87,7 +87,7 @@ function Find-MaxVersion {
     return $maxVersion
 }
 
-function Increment-Version {
+function IncrementVersion {
 
     param($version)
 
@@ -231,7 +231,7 @@ $tags = Get-AllTags
 
 $maxVersion = Find-MaxVersion $tags
 
-$nextVersion = Increment-Version $maxVersion
+$nextVersion = IncrementVersion $maxVersion
 
 if (-not $nextVersion.Valid) {
     exit 1

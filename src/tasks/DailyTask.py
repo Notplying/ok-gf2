@@ -455,7 +455,7 @@ class DailyTask(BaseGfTask):
         for other in others_list:
             if not self.wait_click_ocr(match=other, after_sleep=1, raise_if_not_found=False):
                 continue  # 找不到商店就跳过
-            if not self.wait_click_ocr(match="一键购买", box=self.box.bottom_right, time_out=1,
+            if not self.wait_click_ocr(match=re.compile("购买"), box=self.box.bottom_right, time_out=1,
                                        raise_if_not_found=False):
                 continue  # 找不到一键购买按钮就跳过
             if self.wait_click_ocr(match='购买', after_sleep=1, raise_if_not_found=False):
