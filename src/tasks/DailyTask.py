@@ -1,5 +1,5 @@
 import re
-
+import time
 from ok import Logger, find_boxes_by_name, Box
 from src.tasks.BaseGfTask import BaseGfTask, pop_ups, stamina_re, map_re, parse_time_option
 from src.tasks.CommunityClient import CommunityClient
@@ -370,18 +370,28 @@ class DailyTask(BaseGfTask):
         self.info_set('current_task', 'gongongqu')
         if result := self.wait_ocr(match=re.compile('委托'), box=self.box.bottom_right, raise_if_not_found=True, log=True):
             self.click_box_by_match_position(result, "委托", after_sleep=2)
-            buttons = self.find_feature(feature_name='ggq_can_button', box=self.box.left)
+            start_time = time.time()
+            while True:
+                if time.time() - start_time > 10:
+                    self.log_info("公共区委托界面停留过久，返回")
+                    break
+                buttons = self.find_feature(feature_name='ggq_can_button', box=self.box.left)
+                if buttons and len(buttons) >= 2:
+                    break            
             if not self.config.get('自主循环'):
-                self.click(buttons[0])
+                if buttons:
+                    self.click(buttons[0])
                 if self.wait_ocr(match=['最小'], time_out=4, settle_time=2, log=True):
                     self.wait_click_ocr(match=['确认'], after_sleep=2.5, raise_if_not_found=True)
                 self.back(after_sleep=2)
-            self.click(buttons[1], after_sleep=2)
+            
+            if buttons and len(buttons) >= 2:
+                self.click(buttons[1], after_sleep=2)
             if self.wait_ocr(match='获得道具', box=self.box.top, time_out=2, log=True):
                 self.back(after_sleep=2)
             else:
                 self.wait_pop_up(count=1)
-            if len(buttons) > 2:
+            if buttons and len(buttons) > 2:
                 self.click(buttons[2], after_sleep=2)
                 self.wait_click_ocr(match=['再次派遣'], box=self.box.bottom, after_sleep=2, raise_if_not_found=False)
             if self.config.get("自主循环"):
