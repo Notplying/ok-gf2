@@ -1,0 +1,56 @@
+{
+    "images": [
+        {
+            "id": 1,
+            "file_name": "images/0.png",
+            "width": 2560,
+            "height": 1440
+        },
+        {
+            "id": 2,
+            "file_name": "images/0.png",
+            "width": 2560,
+            "height": 1440
+        }
+    ],
+    "annotations": [
+        {
+            "id": 1,
+            "image_id": 1,
+            "category_id": 1,
+            "bbox": [
+                348,
+                560,
+                60,
+                67
+            ],
+            "area": 4020,
+            "iscrowd": 0
+        },
+        {
+            "id": 2,
+            "image_id": 2,
+            "category_id": 2,
+            "bbox": [
+                450,
+                668,
+                44,
+                44
+            ],
+            "area": 1936,
+            "iscrowd": 0
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "free_eat_entry",
+            "supercategory": ""
+        },
+        {
+            "id": 2,
+            "name": "ggq_can_button",
+            "supercategory": ""
+        }
+    ]
+}
