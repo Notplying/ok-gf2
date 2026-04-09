@@ -447,7 +447,7 @@ class DailyTask(BaseGfTask):
             self.wait_pop_up(time_out=5, count=1)
             self.back()
             self.sleep(1)
-        self.wait_click_ocr(match=["臻品礼包", "珍品礼包", "限时礼包"], box=self.box.top, after_sleep=0.5,
+        self.wait_click_ocr(match=["臻品礼包", "限时礼包"], box=self.box.top, after_sleep=0.5,
                             raise_if_not_found=True, time_out=2)
         if self.wait_click_ocr(match=['免费'], after_sleep=0.5, raise_if_not_found=False, time_out=1):
             self.log_info('found free item to buy')
