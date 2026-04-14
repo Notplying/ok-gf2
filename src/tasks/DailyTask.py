@@ -370,7 +370,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
                     self.click(activity)
                     if activity_count >= len(activity_wuzi_names):
                         activity_count -= 1
-                    name_re = re.escape(activity_wuzi_names[activity_count])
+                    name_re = activity_wuzi_names[activity_count]
                     to_clicks = self.wait_ocr_until_count(
                         match=[re.compile(f"{name_re}[·・：]上[篇筒]"), re.compile(f"{name_re}[·・：]下[篇筒]")],
                         box=None,
