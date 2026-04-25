@@ -182,7 +182,8 @@ class BaseGfTask(BaseTask):
         else:
             feature_boxes = []
             for feature in [fL.dog_icon, fL.message_icon]:
-                feature_boxes.extend(self.find_one(feature, vertical_variance=0.002, horizontal_variance=0.002))
+                if result:= self.find_one(feature, vertical_variance=0.002, horizontal_variance=0.002):
+                    feature_boxes.append(result)
             if len(feature_boxes) + len(boxes) >= 4:
                 if recheck_time:
                     self.sleep(recheck_time)
