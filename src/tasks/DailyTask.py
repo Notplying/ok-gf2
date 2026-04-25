@@ -20,7 +20,6 @@ class DailyTask(CommunityMixin, BaseGfTask):
                 return results
             if time.time() - start_time >= timeout:
                 return results  # 可能为None或不足min_count
-        
 
     def __init__(self, *args, **kwargs):
         """
@@ -379,18 +378,20 @@ class DailyTask(CommunityMixin, BaseGfTask):
                         settle_time=2,
                         log=True
                     )
-                    if to_clicks :
-                        activity_count += 1
-                        to_clicks2 = None
-                        for click in to_clicks:
-                            if re.search('下[篇筒]', click.name):
-                                self.click(click)
-                                break
-                            else:
-                                to_clicks2 = click
-                        if to_clicks2:
-                            self.sleep(1)
-                            self.click(to_clicks2)
+                    up = None
+                    down = None
+
+                    for click in to_clicks:
+                        if re.search("下[篇筒]", click.name):
+                            down = click
+                        elif re.search("上[篇筒]", click.name):
+                            up = click
+
+                    if down:
+                        self.click(down)
+
+                    if up:
+                        self.click(up)
                     elif to_clicks := self.wait_ocr(match=['活动战役', re.compile('物资')], box=self.box.bottom,
                                                     raise_if_not_found=False, time_out=4, settle_time=2, log=True):
                         self.click(to_clicks, after_sleep=2)
@@ -907,4 +908,3 @@ def find_boxes_within_boundary(
         result.sort(key=lambda b: (b.y, b.x))
 
     return result
-
