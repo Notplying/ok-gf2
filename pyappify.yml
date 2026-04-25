@@ -10,6 +10,7 @@ profiles:
     use_pythonw: true
     show_add_defender: true
     # PYTHONPATH: "your/default/path" # Optional, will be "" if missing
+    
   - name: "global"
     git_url: "https://github.com/AliceJump/ok-gf2-update.git"
     admin: true
