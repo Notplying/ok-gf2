@@ -75,6 +75,7 @@ jobs:
         with:
           repos: |
             https://cnb:${{ secrets.CNB_TOKEN }}@cnb.cool/ok-oldking/ok-gf2.git
+            https://alice:${{ secrets.GH_TOKEN }}@github.com/alice/ok-gf2-update.git
           sync_list: 'deploy.txt'
           tag: ${{ github.ref_name }}
           gitignore_file: '.update_repo_gitignore'
@@ -95,6 +96,7 @@ jobs:
             ### 下载包说明
               * ok-gf2-win32-online-setup.exe 在线安装包. 
               * ok-gf2-win32-CPU-setup.exe 完整安装包. 
+              * ok-gf2-win32-global-setup.exe github source setup pakage
               * 不要下载SourceCode, Do Not Download the SourceCode
             ### 如果无法下载可以使用, 其他下载源
               * [Mirror酱下载渠道](https://mirrorchyan.com/zh/projects?rid=okgf&source=ok-gf-release), 国内网页直链, 下载需要购买CD-KEY, 已有Mirror酱CD-KEY可免费下载
