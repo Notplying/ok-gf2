@@ -250,7 +250,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
 
     def free_time_layer(self):
         self.info_set('current_task', 'free_time_layer')
-        for i in range(4):
+        for i in range(3):
             self.wait_click_ocr(match='活动层', box=self.box.right, time_out=2, raise_if_not_found=True)
             if self.is_free_layer():
                 if i == 0:
@@ -263,7 +263,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
                         need_extra_confirm=False
                     )
 
-                elif i != 3:
+                elif i != 2:
                     self.do_food_flow(
                         enter_func=self.go_eat,
                         entry_match=re.compile('美味烹调'),
