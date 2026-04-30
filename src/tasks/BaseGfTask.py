@@ -68,7 +68,7 @@ class BaseGfTask(BaseTask):
                                time_out=time_out):
             raise Exception("请从游戏主页进入")
 
-    def skip_dialogs(self, end_match, end_box=None, time_out=120, has_dialog=True):
+    def skip_dialogs(self, end_match, end_box=None, time_out=120, has_dialog=True, raise_if_not_found=True):
         self.info_set('current_task', 'skip_dialogs')
         start = time.time()
         while time.time() - start < time_out:
@@ -90,13 +90,14 @@ class BaseGfTask(BaseTask):
                     self.click_relative(0.95, 0.04)
                 self.sleep(2)
             self.next_frame()
-        raise Exception('跳过剧情超时!')
+        if raise_if_not_found:
+            raise Exception('跳过剧情超时!')
 
     def auto_battle(self, end_match=None, end_box=None, has_dialog=False, need_click_auto=False,
                     has_dialog_behind_start=False):
         self.info_set('current_task', 'auto battle')
         result = self.skip_dialogs(end_match=['作战开始', '行动结束'], end_box=self.box.bottom, time_out=120,
-                                   has_dialog=has_dialog)
+                                   has_dialog=has_dialog, raise_if_not_found=False)
         if result[0].name == '作战开始':
             self.sleep(2)
             self.click_box(result, after_sleep=1)
