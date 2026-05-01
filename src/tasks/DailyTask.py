@@ -235,7 +235,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
             if self.wait_click_ocr(match=main_btn, box=self.box.bottom_right, time_out=10):
                 if self.wait_click_ocr(match=second_btn, time_out=3):
                     if need_extra_confirm:
-                        self.wait_click_ocr(match='确认', time_out=3)
+                        self.wait_click_ocr(match='确认', time_out=3, after_sleep=1)
                     self.skip_dialogs(end_match=skip_end_match, time_out=60)
                     self.wait_click_ocr(match='确认', time_out=3)
                     self.wait_pop_up(count=1)
@@ -462,6 +462,15 @@ class DailyTask(CommunityMixin, BaseGfTask):
         """
         点击OCR匹配元素，等待点击特征在 3s 内消失。
         若特征未消失则重试，最多尝试 3 次。
+        Args:
+            step_num (int): 步骤编号
+            match (str or list): OCR匹配内容
+            box (Box): OCR匹配范围
+            time_out (int): OCR匹配超时时间
+            after_sleep (int): 点击后等待时间
+            **kwargs: 其他参数，传递给 wait_click_ocr
+        Returns:
+            bool: 是否成功点击
         """
         for attempt in range(3):
             result = self.wait_click_ocr(
@@ -505,11 +514,12 @@ class DailyTask(CommunityMixin, BaseGfTask):
             return
 
         # 步骤 3: 点击"确认"，带重试
-        self._auto_loop_step_with_retry(
+        self.wait_click_ocr(
             step_num=3,
             match=["确认"],
             settle_time=2,
             after_sleep=2,
+            box=self.box.center
         )
         # 步骤 4: 等待"循环结束"出现并点击（仅作为一次识别完成的角色，不需要重试）
         if not self.wait_click_ocr(
@@ -524,6 +534,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
             match=["确认"],
             settle_time=2,
             after_sleep=2,
+            box=self.box.bottom
         ):
             return
 

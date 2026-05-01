@@ -7,7 +7,5 @@ class TestTask(BaseGfTask):
         super().__init__(*args, **kwargs)
         self.name = "测试用"
     def run(self):
-        result = self.ocr(match="下一步", frame_processor=self.make_hsv_isolator(hR.WHITE),log=True)
-        if result:
-            self.click(result)
-            self.wait_pop_up()
+        skip_end_match = ["饮品加成", "确认"]
+        self.skip_dialogs(end_match=skip_end_match, time_out=60)

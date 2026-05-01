@@ -74,11 +74,11 @@ class BaseGfTask(BaseTask):
         while time.time() - start < time_out:
             boxes = self.ocr()
             if skip := self.find_boxes(boxes, match=['跳过']):
-                self.click(skip)
+                self.click(skip, after_sleep=2)
             elif no_alert := self.find_boxes(boxes, match='今日不再提示'):
                 self.click(no_alert)
                 self.sleep(0.2)
-                self.click(self.find_boxes(boxes, match='确认'))
+                self.click(self.find_boxes(boxes, match='确认'), after_sleep=2)
             elif result := self.find_boxes(boxes, match=end_match, boundary=end_box):
                 self.sleep(1)
                 return result
@@ -102,7 +102,7 @@ class BaseGfTask(BaseTask):
             self.sleep(2)
             self.click_box(result, after_sleep=1)
             start_result = self.skip_dialogs(end_match=[re.compile('行动完成'), re.compile('行动结束'), re.compile('还有可部署'), re.compile('任务完成')],
-                                         has_dialog=True, time_out=45)
+                                         has_dialog=True, time_out=45, raise_if_not_found=False)
             ok_bool = bool(start_result) and (not ("还有可部署" in start_result[0].name or "行动结束" in start_result[0].name))
             if not ok_bool:
                 if start_result and ('还有可部署' in start_result[0].name):
@@ -117,7 +117,7 @@ class BaseGfTask(BaseTask):
                 if not start_result and has_dialog_behind_start:
                     start_result = self.skip_dialogs(end_match=['作战开始', '行动结束'], end_box=self.box.bottom,
                                                      time_out=120,
-                                                     has_dialog=has_dialog)
+                                                     has_dialog=has_dialog, raise_if_not_found=False)
                     if self.wait_ocr(match='注意', box=self.box.top):
                         self.wait_click_ocr(match='取消', after_sleep=2)
                 if start_result and need_click_auto:
