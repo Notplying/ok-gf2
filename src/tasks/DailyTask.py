@@ -259,7 +259,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
                         entry_match=re.compile('茶歇一刻'),
                         main_btn='制作',
                         second_btn='确认',
-                        skip_end_match=['饮品加成', '确认'],
+                        skip_end_match=['饮品加成'],
                         need_extra_confirm=False
                     )
 
@@ -269,7 +269,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
                         entry_match=re.compile('美味烹调'),
                         main_btn='下一步',
                         second_btn='确认邀请',
-                        skip_end_match=['前往战役', '确认'],
+                        skip_end_match=['前往战役'],
                         need_extra_confirm=True,
                         need_again_test=True
                     )
