@@ -233,11 +233,10 @@ class DailyTask(CommunityMixin, BaseGfTask):
             else:
                 return False
             if self.wait_click_ocr(match=main_btn, box=self.box.bottom_right, time_out=10):
-                if self.wait_click_ocr(match=second_btn, time_out=3):
+                if self.wait_click_ocr(match=second_btn, time_out=3, after_sleep=2):
                     if need_extra_confirm:
                         self.wait_click_ocr(match='确认', time_out=3, after_sleep=1)
                     self.skip_dialogs(end_match=skip_end_match, time_out=60)
-                    self.wait_click_ocr(match='确认', time_out=3)
                     self.wait_pop_up(count=1)
                 return True
             else:
