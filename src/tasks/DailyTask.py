@@ -31,6 +31,7 @@ class DailyTask(CommunityMixin, BaseGfTask):
         self.support_schedule_task = True
         self._init_default_config()
         self._init_stamina_options()
+        self._init_default_config_group()
         self.add_exit_after_config()
 
     def _init_default_config(self):
@@ -121,6 +122,21 @@ class DailyTask(CommunityMixin, BaseGfTask):
         self.stamina_options = ['军备解析', '深度搜索', '决策构象', '定向']
         self.config_type["体力本"] = {'type': "drop_down", 'options': self.stamina_options}
 
+    def _init_default_config_group(self):
+        """
+            配置组，开启自主循环后会跳过的项目
+
+        """
+        self.default_config_group.update({
+            "社区每日": ["用户名", "密码"],
+            "活动自律": ["当前物资关卡名称"],
+            "活动层": ["喝水", "吃饭"],
+            "公共区/调度室": ["自主循环"],
+            "自主循环跳过项": ["自动刷体力", "刷钱本", "竞技场"],
+            "购买免费礼包": ["商店心愿单购买"],
+            "自动刷体力": ["体力本"],
+            "班组": ["尘烟"],
+        })
     def run(self):
         if not self.config.get('已确认启用游戏内全局自动功能'):
             self.confirm_auto_battle_up()

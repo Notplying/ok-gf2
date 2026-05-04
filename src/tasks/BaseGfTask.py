@@ -39,6 +39,7 @@ class BaseGfTask(BaseTask):
             "酸蚀": ["翡图萨", "哈卜茜", "琳德", "米什缇", "可露凯", "纳甘", "佩里缇亚", "纳美西丝"]
         }
         self.box = ScreenPosition(self)
+        self.default_config_group = {}
 
     def isolate_by_hsv_ranges(self, frame, ranges, invert=True, kernel_size=2):
         """
