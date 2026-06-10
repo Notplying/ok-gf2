@@ -50,7 +50,7 @@ class CommunityMixin:
         url = f"{self.BASE_API}/login/account"
         payload = {
             "account_name": account,
-            "passwd": self.md5_hex(password),
+            "passwd": password,
             "source": source,
         }
 
