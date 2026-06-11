@@ -257,7 +257,14 @@ class CommunityMixin:
         self.log_info("每日任务完成")
 
     def run_community_flow(self, user: str, pwd: str) -> bool:
-        token = self.login(user, pwd)
+        token = None
+
+        for login_type in ("mail", "phone"):
+            token = self.login(user, pwd, login_type)
+            if token:
+                break
+            time.sleep(1)
+
         if token:
             self.daily_tasks(token)
             self.auto_exchange(token)
