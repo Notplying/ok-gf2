@@ -18,7 +18,7 @@ config = {
     "ocr": {"lib": "onnxocr", "params": {"use_openvino": True}},  # 可选, 使用的OCR库
     "windows": {  # Windows游戏请填写此设置
         "exe": ["GF2_Exilium.exe"],  # 新版统一使用 list
-        # 'hwnd_class': 'UnrealWindow',
+        'hwnd_class': 'UnityWndClass',
         "interaction": "Genshin",  # 或 EfInteraction，根据项目
         "capture_method": ["WGC", "BitBlt_RenderFull"],
         # Windows版本支持的话, 优先使用WGC, 否则使用BitBlt_Full. 支持的capture有 BitBlt, WGC, BitBlt_RenderFull, DXGI
