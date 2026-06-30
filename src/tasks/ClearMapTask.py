@@ -64,7 +64,7 @@ class ClearMapTask(BaseGfTask):
                 pattern = re.compile(re.escape(last_failed_name))
 
                 for p in processors:
-                    maps = self.ocr(box=map_ocr_box, match=pattern, log=True, frame_processor=p)
+                    maps = self.ocr(match=pattern, log=True, frame_processor=p)
                     if maps:
                         break
 
@@ -80,7 +80,7 @@ class ClearMapTask(BaseGfTask):
 
                 maps = []
                 for p in processors:
-                    maps.extend(self.ocr(box=map_ocr_box, match=map_re, log=True, frame_processor=p))
+                    maps.extend(self.ocr(match=map_re, log=True, frame_processor=p))
                 maps.extend(self.find_feature(feature_name=fL.not_clear_one, box=map_ocr_box))
 
                 maps,map_name_groups  = merge_maps(maps, x_threshold=40/1920*self.width, y_threshold=40/1080*self.height)
