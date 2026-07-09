@@ -71,6 +71,7 @@ config = {
         ["src.tasks.ClearMapTask", "ClearMapTask"],
         ["src.tasks.TestStartGame", "TestStartGame"],
         ["src.tasks.TestTask", "TestTask"],
+        ["src.tasks.PlatoonTask", "PlatoonTask"],
         ["ok", "DiagnosisTask"],
     ],
 }
