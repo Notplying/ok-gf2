@@ -59,18 +59,21 @@ class PlatoonTask(BaseGfTask):
                 "and you have logged in at least once before."
             )
 
-        # === Step 2: Find and click "Platoon" in the bottom right ===
+        # Let the main screen fully settle before searching
+        self.sleep(5)
+
+        # === Step 2: Find and click "Platoon" (scan the whole screen) ===
         self.info_set('current_task', 'navigate_to_platoon')
-        self.log_info("Looking for 'Platoon' button in bottom right...")
+        self.log_info("Looking for 'Platoon' button (full screen search)...")
         if not self.wait_click_ocr(
             match='Platoon',
-            box=self.box.bottom_right,
-            time_out=5,
+            box=None,          # scan entire screen — button may vary by resolution
+            time_out=10,
             after_sleep=2,
             raise_if_not_found=True,
             log=True,
         ):
-            self.log_error("Could not find 'Platoon' button in bottom right")
+            self.log_error("Could not find 'Platoon' button")
             return False
 
         # === Step 3: On the Platoon page, find and click "Members" ===
