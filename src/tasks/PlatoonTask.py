@@ -78,7 +78,7 @@ class PlatoonTask(BaseGfTask):
         self.log_info("Looking for 'Members' button on the Platoon page...")
         if not self.wait_click_ocr(
             match='Members',
-            box=self.box.bottom_right,
+            box=self.box.bottom_left,
             time_out=5,
             after_sleep=2,
             raise_if_not_found=True,
