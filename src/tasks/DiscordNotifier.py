@@ -136,4 +136,4 @@ class DiscordNotifier:
                 logger.error(f"Unexpected error sending to Discord: {e}")
 
         if sent > 0:
-            logger.info(f"Discord: sent {sent}/{total} screenshots", notify=True)
+            logger.info(f"Discord: sent {sent}/{total} screenshots")
