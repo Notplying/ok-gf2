@@ -6,6 +6,45 @@ from pathlib import Path
 import requests
 
 
+def _load_dotenv():
+    """Load .env file from the project root into os.environ.
+
+    Only sets vars that are not already present in the environment.
+    Supports simple KEY=VALUE lines, blank lines, and # comments.
+    """
+    # Walk up from this file to find the project root (where .git is)
+    project_dir = Path(__file__).resolve().parent
+    while project_dir != project_dir.parent:
+        if (project_dir / ".env").exists():
+            env_file = project_dir / ".env"
+            break
+        if (project_dir / ".git").exists():
+            env_file = project_dir / ".env"
+            break
+        project_dir = project_dir.parent
+    else:
+        return  # No project root found
+
+    if not env_file.is_file():
+        return
+
+    try:
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip()
+            # Only set if not already present (env vars take precedence)
+            if key and key not in os.environ:
+                os.environ[key] = value
+    except OSError:
+        pass
+
+
 class DiscordNotifier:
     """Stateless helper that sends images to a Discord webhook."""
 
@@ -23,6 +62,7 @@ class DiscordNotifier:
         """
         from ok import Logger
 
+        _load_dotenv()
         webhook_url = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
         if not webhook_url:
             Logger.get_logger(__name__).info(
