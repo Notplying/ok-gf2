@@ -114,8 +114,6 @@ class PlatoonTask(BaseGfTask):
         Args:
             max_scrolls: Maximum number of scrolls to prevent infinite loops.
         """
-        from src.tasks.DiscordNotifier import DiscordNotifier
-
         self.sleep(1)  # Let the member list fully render
 
         # Temp directory for Discord-bound copies (we control paths here)
@@ -192,13 +190,23 @@ class PlatoonTask(BaseGfTask):
 
         self.log_info(f"Finished scrolling. Pages captured: {len(captured_paths)}")
 
-        # --- Send to Discord ---
-        if captured_paths:
-            self.log_info(
-                f"Sending {len(captured_paths)} screenshots to Discord..."
-            )
-            DiscordNotifier.send_screenshots(captured_paths, "Platoon Members")
+        if not captured_paths:
+            try:
+                os.rmdir(screenshots_dir)
+            except OSError:
+                pass
 
+        # --- Send to Discord ---
+        try:
+            from src.tasks.DiscordNotifier import DiscordNotifier
+            if captured_paths:
+                self.log_info(
+                    f"Sending {len(captured_paths)} screenshots to Discord..."
+                )
+                DiscordNotifier.send_screenshots(captured_paths, "Platoon Members")
+        except Exception as e:
+            self.log_info(f"Discord notification failed: {e} — continuing")
+        finally:
             # Clean up temp files
             for p in captured_paths:
                 try:
