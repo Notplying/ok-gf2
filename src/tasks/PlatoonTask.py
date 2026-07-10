@@ -1,4 +1,7 @@
 import time
+
+import cv2
+import numpy as np
 from ok import Logger, TaskDisabledException
 from src.tasks.BaseGfTask import BaseGfTask
 
@@ -46,6 +49,8 @@ class PlatoonTask(BaseGfTask):
         # Timeout of 120s accounts for game startup, title screen, and
         # any post-update shader compilation.
         self.info_set('current_task', 'auto_login_and_ensure_main')
+        self.hwnd.bring_to_front()
+        self.sleep(0.1)
         self.log_info("Auto-logging in: waiting for game to reach main screen (timeout=120s)...")
         try:
             self.ensure_main(recheck_time=2, time_out=120)
@@ -62,30 +67,26 @@ class PlatoonTask(BaseGfTask):
         # Let the main screen fully settle before searching
         self.sleep(5)
 
-        # === Step 2: Find and click "Platoon" (scan the whole screen) ===
+        # === Step 2: Find and click "Platoon" via template matching ===
         self.info_set('current_task', 'navigate_to_platoon')
-        self.log_info("Looking for 'Platoon' button (full screen search)...")
-        if not self.wait_click_ocr(
-            match='Platoon',
-            box=None,          # scan entire screen — button may vary by resolution
+        self.log_info("Looking for 'Platoon' button via template matching (full screen search)...")
+        if not self.wait_click_feature(
+            feature='platoon_button_main',
             time_out=10,
             after_sleep=2,
             raise_if_not_found=True,
-            log=True,
         ):
             self.log_error("Could not find 'Platoon' button")
             return False
 
-        # === Step 3: On the Platoon page, find and click "Members" ===
+        # === Step 3: On the Platoon page, find and click "Members" via template matching ===
         self.info_set('current_task', 'navigate_to_members')
-        self.log_info("Looking for 'Members' button on the Platoon page...")
-        if not self.wait_click_ocr(
-            match='Members',
-            box=self.box.bottom_left,
+        self.log_info("Looking for 'Members' button via template matching...")
+        if not self.wait_click_feature(
+            feature='member_button_platoon',
             time_out=5,
             after_sleep=2,
             raise_if_not_found=True,
-            log=True,
         ):
             self.log_error("Could not find 'Members' button on the Platoon page")
             return False
@@ -98,25 +99,21 @@ class PlatoonTask(BaseGfTask):
         self.log_info("Platoon Members Screenshot task completed", notify=True)
         return True
 
-    def _scroll_and_screenshot_members(self, max_scrolls=30, scroll_duration=1.0):
+    def _scroll_and_screenshot_members(self, max_scrolls=30):
         """
         Scrolls the member list and takes a screenshot after each scroll.
 
-        The member list is assumed to be in the main content area (center).
-        Each scroll advances the list, and a screenshot is captured after each
-        scroll to document the visible members.
-
-        The loop stops when:
-          - An end-of-list indicator is detected via OCR
-          - max_scrolls is reached
-          - No change in list content is detected after consecutive scrolls
-            (using feature matching on consecutive screenshots)
+        Uses click-and-drag (swipe) via PostMessage directly to the game window
+        (background-safe, no focus needed). Screenshots are compared
+        frame-to-frame to detect when the list stops changing (bottom reached).
 
         Args:
             max_scrolls: Maximum number of scrolls to prevent infinite loops.
-            scroll_duration: Duration of each swipe gesture in seconds.
         """
         self.sleep(1)  # Let the member list fully render
+
+        prev_frame = None
+        same_count = 0
 
         for i in range(max_scrolls):
             self.info_set('scroll_index', i + 1)
@@ -126,28 +123,45 @@ class PlatoonTask(BaseGfTask):
             self.screenshot(f'platoon_members_page_{i + 1:03d}')
             self.log_info(f"Captured screenshot: platoon_members_page_{i + 1:03d}")
 
-            # Check for end-of-list indicators via OCR
-            if self.ocr(
-                match=['No more', 'End of list', 'No members found'],
-                box=self.box.center,
-                time_out=1,
-                raise_if_not_found=False,
-                log=True,
-            ):
-                self.log_info("Reached end of member list, stopping")
-                break
+            # Compare current frame with previous to detect end-of-list.
+            current_frame = self.frame
+            if current_frame is not None and prev_frame is not None:
+                # Crop to the center member list area for comparison
+                h, w = current_frame.shape[:2]
+                x1, y1 = int(w * 0.1), int(h * 0.2)
+                x2, y2 = int(w * 0.9), int(h * 0.8)
+                cur_crop = current_frame[y1:y2, x1:x2]
+                prev_crop = prev_frame[y1:y2, x1:x2]
 
-            # Check if we can still scroll — if list items look the same,
-            # we may have hit the bottom (non-scrollable content)
+                # Resize to a small fixed size for fast comparison
+                cur_small = cv2.resize(cur_crop, (64, 64))
+                prev_small = cv2.resize(prev_crop, (64, 64))
+                diff = cv2.absdiff(cur_small, prev_small)
+                mean_diff = np.mean(diff)
+
+                self.log_info(f"Frame diff: {mean_diff:.2f}")
+
+                if mean_diff < 2.0:  # Nearly identical — probably hit the bottom
+                    same_count += 1
+                    if same_count >= 1:
+                        self.log_info(
+                            "Member list hasn't changed after consecutive scrolls, "
+                            "reached end of list. Stopping."
+                        )
+                        break
+                else:
+                    same_count = 0
+
+            prev_frame = current_frame
+
             if i > 0 and i % 5 == 0:
                 self.log_info(f"Progress: scrolled {i + 1} pages so far...")
 
-            # Scroll down: swipe upward within the member list area
-            self.swipe_relative(
-                0.5, 0.75,   # start: center, near bottom of the member list
-                0.5, 0.35,   # end: center, near top of the member list
-                duration=scroll_duration,
-            )
-            self.sleep(0.8)  # Wait for the list to settle after scroll animation
+            # Scroll down via mouse wheel. Bring the game window to the
+            # foreground first so the scroll hits the right window.
+            self.hwnd.bring_to_front()
+            self.sleep(0.1)
+            self.scroll_relative(0.5, 0.5, -25)
+            self.sleep(2)  # Wait for the list to settle after scroll animation
 
         self.log_info(f"Finished scrolling. Pages captured: {min(i + 1, max_scrolls)}")

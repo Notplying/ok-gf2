@@ -8,3 +8,5 @@ class FeatureList(str, Enum):
     message_icon = 'message_icon'
     not_clear_one = 'not_clear_one'
     now_icon = 'now_icon'
+    platoon_button_main = 'platoon_button_main'
+    member_button_platoon = 'member_button_platoon'

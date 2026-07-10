@@ -29,6 +29,18 @@
             "file_name": "images/1.png",
             "width": 1920,
             "height": 1080
+        },
+        {
+            "id": 6,
+            "file_name": "images/2.png",
+            "width": 1280,
+            "height": 720
+        },
+        {
+            "id": 7,
+            "file_name": "images/5.png",
+            "width": 1280,
+            "height": 720
         }
     ],
     "annotations": [
@@ -109,6 +121,32 @@
             ],
             "area": 325,
             "iscrowd": 0
+        },
+        {
+            "id": 7,
+            "image_id": 6,
+            "category_id": 7,
+            "bbox": [
+                967,
+                627,
+                48,
+                62
+            ],
+            "area": 2976,
+            "iscrowd": 0
+        },
+        {
+            "id": 8,
+            "image_id": 7,
+            "category_id": 8,
+            "bbox": [
+                102,
+                660,
+                92,
+                31
+            ],
+            "area": 2852,
+            "iscrowd": 0
         }
     ],
     "categories": [
@@ -140,6 +178,16 @@
         {
             "id": 6,
             "name": "now_icon",
+            "supercategory": ""
+        },
+        {
+            "id": 7,
+            "name": "platoon_button_main",
+            "supercategory": ""
+        },
+        {
+            "id": 8,
+            "name": "member_button_platoon",
             "supercategory": ""
         }
     ]
