@@ -1,3 +1,4 @@
+import os
 import time
 
 import cv2
@@ -107,33 +108,52 @@ class PlatoonTask(BaseGfTask):
         (background-safe, no focus needed). Screenshots are compared
         frame-to-frame to detect when the list stops changing (bottom reached).
 
+        After capturing, sends screenshots to Discord if DISCORD_WEBHOOK_URL
+        is configured. The duplicate frame that confirmed end-of-list is excluded.
+
         Args:
             max_scrolls: Maximum number of scrolls to prevent infinite loops.
         """
+        from src.tasks.DiscordNotifier import DiscordNotifier
+
         self.sleep(1)  # Let the member list fully render
+
+        # Temp directory for Discord-bound copies (we control paths here)
+        screenshots_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "screenshots", ".discord_temp"
+        )
+        os.makedirs(screenshots_dir, exist_ok=True)
 
         prev_frame = None
         same_count = 0
+        captured_paths = []
 
         for i in range(max_scrolls):
             self.info_set('scroll_index', i + 1)
             self.log_info(f"Screenshotting member page {i + 1}...")
 
-            # Capture the current visible member list
+            # Save via the normal screenshot system (debug tab, etc.)
             self.screenshot(f'platoon_members_page_{i + 1:03d}')
-            self.log_info(f"Captured screenshot: platoon_members_page_{i + 1:03d}")
+
+            # Also save a copy to a known path for Discord
+            current_frame = self.frame
+            if current_frame is not None:
+                discord_path = os.path.join(
+                    screenshots_dir, f"page_{i + 1:03d}.png"
+                )
+                cv2.imwrite(discord_path, current_frame)
+                captured_paths.append(discord_path)
+                self.log_info(f"Saved Discord copy: page_{i + 1:03d}")
 
             # Compare current frame with previous to detect end-of-list.
-            current_frame = self.frame
             if current_frame is not None and prev_frame is not None:
-                # Crop to the center member list area for comparison
                 h, w = current_frame.shape[:2]
                 x1, y1 = int(w * 0.1), int(h * 0.2)
                 x2, y2 = int(w * 0.9), int(h * 0.8)
                 cur_crop = current_frame[y1:y2, x1:x2]
                 prev_crop = prev_frame[y1:y2, x1:x2]
 
-                # Resize to a small fixed size for fast comparison
                 cur_small = cv2.resize(cur_crop, (64, 64))
                 prev_small = cv2.resize(prev_crop, (64, 64))
                 diff = cv2.absdiff(cur_small, prev_small)
@@ -144,10 +164,17 @@ class PlatoonTask(BaseGfTask):
                 if mean_diff < 2.0:  # Nearly identical — probably hit the bottom
                     same_count += 1
                     if same_count >= 1:
-                        self.log_info(
-                            "Member list hasn't changed after consecutive scrolls, "
-                            "reached end of list. Stopping."
-                        )
+                        # Pop the duplicate before we send to Discord
+                        if captured_paths:
+                            dup = captured_paths.pop()
+                            try:
+                                os.remove(dup)
+                            except OSError:
+                                pass
+                            self.log_info(
+                                "Member list hasn't changed — reached end of list. "
+                                "Removed duplicate screenshot. Stopping."
+                            )
                         break
                 else:
                     same_count = 0
@@ -157,11 +184,28 @@ class PlatoonTask(BaseGfTask):
             if i > 0 and i % 5 == 0:
                 self.log_info(f"Progress: scrolled {i + 1} pages so far...")
 
-            # Scroll down via mouse wheel. Bring the game window to the
-            # foreground first so the scroll hits the right window.
+            # Scroll down via mouse wheel.
             self.hwnd.bring_to_front()
             self.sleep(0.1)
             self.scroll_relative(0.5, 0.5, -25)
             self.sleep(2)  # Wait for the list to settle after scroll animation
 
-        self.log_info(f"Finished scrolling. Pages captured: {min(i + 1, max_scrolls)}")
+        self.log_info(f"Finished scrolling. Pages captured: {len(captured_paths)}")
+
+        # --- Send to Discord ---
+        if captured_paths:
+            self.log_info(
+                f"Sending {len(captured_paths)} screenshots to Discord..."
+            )
+            DiscordNotifier.send_screenshots(captured_paths, "Platoon Members")
+
+            # Clean up temp files
+            for p in captured_paths:
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
+            try:
+                os.rmdir(screenshots_dir)
+            except OSError:
+                pass
