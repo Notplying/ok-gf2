@@ -72,6 +72,7 @@ config = {
         ["src.tasks.TestStartGame", "TestStartGame"],
         ["src.tasks.TestTask", "TestTask"],
         ["src.tasks.PlatoonTask", "PlatoonTask"],
+        ["src.tasks.PlatoonTask2", "PlatoonTask2"],
         ["ok", "DiagnosisTask"],
     ],
 }
