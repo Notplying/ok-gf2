@@ -49,13 +49,15 @@ class DiscordNotifier:
     """Stateless helper that sends images to a Discord webhook."""
 
     @staticmethod
-    def send_screenshots(paths, task_name="Platoon Members"):
+    def send_screenshots(paths, task_name="Platoon Members", content=None):
         """
         Send screenshot files to Discord in batches of 10.
 
         Args:
             paths: List of absolute file paths to PNG images.
             task_name: Label used in the embed title.
+            content: Optional plain-text string sent alongside the first batch's
+                images in the same Discord message (e.g. "gunsmoke").
 
         Returns:
             None — failures are logged, never raised.
@@ -89,7 +91,7 @@ class DiscordNotifier:
                 # --- build multipart payload ---
                 payload = {}
                 if first:
-                    payload["payload_json"] = json.dumps({
+                    first_payload = {
                         "embeds": [{
                             "title": f"{task_name} Screenshots",
                             "description": (
@@ -97,11 +99,17 @@ class DiscordNotifier:
                             ),
                             "timestamp": Path(paths[0]).stat().st_mtime if False else None,
                         }]
-                    })
+                    }
+                    if content:
+                        first_payload["content"] = content
+                    payload["payload_json"] = json.dumps(first_payload)
                 else:
-                    payload["payload_json"] = json.dumps({
+                    batch_payload = {
                         "content": f"Pages {batch_idx + 1}–{batch_end} of {total}"
-                    })
+                    }
+                    if content:
+                        batch_payload["content"] = f"{content}\nPages {batch_idx + 1}–{batch_end} of {total}"
+                    payload["payload_json"] = json.dumps(batch_payload)
 
                 files = []
                 opened = []

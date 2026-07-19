@@ -73,6 +73,7 @@ config = {
         ["src.tasks.TestTask", "TestTask"],
         ["src.tasks.PlatoonTask", "PlatoonTask"],
         ["src.tasks.PlatoonTask2", "PlatoonTask2"],
+        ["src.tasks.GunsmokeTask", "GunsmokeTask"],
         ["ok", "DiagnosisTask"],
     ],
 }
