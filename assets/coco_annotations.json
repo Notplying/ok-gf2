@@ -53,6 +53,30 @@
             "file_name": "images/3.png",
             "width": 1280,
             "height": 720
+        },
+        {
+            "id": 10,
+            "file_name": "images/2.png",
+            "width": 1280,
+            "height": 720
+        },
+        {
+            "id": 11,
+            "file_name": "images/2.png",
+            "width": 1280,
+            "height": 720
+        },
+        {
+            "id": 12,
+            "file_name": "images/2.png",
+            "width": 1280,
+            "height": 720
+        },
+        {
+            "id": 13,
+            "file_name": "images/2.png",
+            "width": 1280,
+            "height": 720
         }
     ],
     "annotations": [
@@ -185,6 +209,58 @@
             ],
             "area": 3296,
             "iscrowd": 0
+        },
+        {
+            "id": 11,
+            "image_id": 10,
+            "category_id": 12,
+            "bbox": [
+                1211,
+                14,
+                53,
+                46
+            ],
+            "area": 2438,
+            "iscrowd": 0
+        },
+        {
+            "id": 12,
+            "image_id": 11,
+            "category_id": 11,
+            "bbox": [
+                1021,
+                489,
+                219,
+                45
+            ],
+            "area": 9855,
+            "iscrowd": 0
+        },
+        {
+            "id": 13,
+            "image_id": 12,
+            "category_id": 13,
+            "bbox": [
+                257,
+                559,
+                157,
+                24
+            ],
+            "area": 3768,
+            "iscrowd": 0
+        },
+        {
+            "id": 14,
+            "image_id": 13,
+            "category_id": 14,
+            "bbox": [
+                968,
+                19,
+                140,
+                31
+            ],
+            "area": 4340,
+            "iscrowd": 0
         }
     ],
     "categories": [
@@ -236,6 +312,26 @@
         {
             "id": 10,
             "name": "gunsmoke_ranking_button",
+            "supercategory": ""
+        },
+        {
+            "id": 11,
+            "name": "fc_platoon_button",
+            "supercategory": ""
+        },
+        {
+            "id": 12,
+            "name": "fc_close_update",
+            "supercategory": ""
+        },
+        {
+            "id": 13,
+            "name": "fc_score_button",
+            "supercategory": ""
+        },
+        {
+            "id": 14,
+            "name": "fc_platoon_ranking",
             "supercategory": ""
         }
     ]
