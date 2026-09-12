@@ -76,6 +76,7 @@ config = {
         ["src.tasks.GunsmokeTask", "GunsmokeTask"],
         ["src.tasks.GunsmokeTask2", "GunsmokeTask2"],
         ["src.tasks.FrontierConquestTask", "FrontierConquestTask"],
+        ["src.tasks.FrontierConquestTask2", "FrontierConquestTask2"],
         ["ok", "DiagnosisTask"],
     ],
 }
