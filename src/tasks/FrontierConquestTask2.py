@@ -95,10 +95,13 @@ class FrontierConquestTask2(BaseGfTask):
             feature='fc_platoon_button',
             time_out=5,
             after_sleep=2,
-            raise_if_not_found=True,
+            raise_if_not_found=False,
         ):
-            self.log_error("Could not find 'Frontier Conquest' button on the Platoon page")
-            return False
+            self.log_info(
+                "'Frontier Conquest' button not found on the Platoon page — "
+                "ending the task gracefully."
+            )
+            return True
 
         # === Step 4: Let the FC page settle, then dismiss the update notice ===
         # The FC landing page plays an opening animation and may pop a
